@@ -6,7 +6,7 @@ const jobRouter = Router();
 jobRouter.post('/jobs',createJob);
 jobRouter.get('/jobs', getallJobs);
 jobRouter.get('/jobs/:id',getJobById);
-jobRouter.delete('/jobs:id',deleteJob);
-jobRouter.patch('/jobs:id',updateJobStatus);
+jobRouter.delete('/jobs/:id',deleteJob);
+jobRouter.patch('/jobs/:id',updateJobStatus);
 
 export default jobRouter;

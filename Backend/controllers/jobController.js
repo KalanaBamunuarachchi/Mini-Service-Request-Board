@@ -1,5 +1,9 @@
 import { JobRequest } from "../models/jobRequests.js";
 
+//regexr safe
+const regexSafe = (text) => {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 //create job
 const createJob = async (req, res, next) => {
@@ -16,7 +20,39 @@ const createJob = async (req, res, next) => {
 //get all jobs
 const getallJobs = async (req, res, next) => {
     try {
-        const jobRequest = await JobRequest.find();
+        const { category, status, search } = req.query;
+
+        let filter = {};
+
+        if (category) {
+            filter.category = category;
+        }
+
+        if (status) {
+            filter.status = status;
+        }
+
+        if (search) {
+            const safeSearch = regexSafe(search);
+
+            filter.$or = [
+                {
+                    title: {
+                        $regex: safeSearch,
+                        $options: "i"
+                    }
+                },
+                {
+                    description: {
+                        $regex: safeSearch,
+                        $options: "i"
+                    }
+                }
+            ];
+        }
+
+        const jobRequest = await JobRequest.find(filter);
+
         res.status(200).json(jobRequest);
 
 
@@ -64,15 +100,21 @@ const deleteJob = async (req, res, next) => {
 
 const updateJobStatus = async (req, res, next) => {
 
-  try {
+    try {
 
         const { status } = req.body;
+
+        if (!status) {
+            return res.status(400).json({
+                message: "Status is required"
+            });
+        }
 
         const jobRequest = await JobRequest.findByIdAndUpdate(
             req.params.id,
             { status },
             {
-                new: true,
+                returnDocument: 'after',
                 runValidators: true
             }
         );
@@ -83,7 +125,7 @@ const updateJobStatus = async (req, res, next) => {
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Job status updated successfully",
             jobRequest
         });
@@ -94,4 +136,4 @@ const updateJobStatus = async (req, res, next) => {
 }
 
 
-export { createJob, getallJobs, getJobById, updateJobStatus, deleteJob};
+export { createJob, getallJobs, getJobById, updateJobStatus, deleteJob };
