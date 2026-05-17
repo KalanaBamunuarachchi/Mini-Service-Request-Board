@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 export default function NewJobPage() {
 
     const router = useRouter();
+    const [error, setError] = useState("");
 
     const [formData, setFormData] = useState({
         title: "",
@@ -66,6 +67,8 @@ export default function NewJobPage() {
 
         try {
 
+            setError("");
+
             await createJob(formData);
 
             router.push("/");
@@ -73,6 +76,8 @@ export default function NewJobPage() {
         } catch (error) {
 
             console.error(error);
+
+            setError("Failed to create job");
 
         }
     };
@@ -189,6 +194,12 @@ export default function NewJobPage() {
                     <button className="bg-green-500 text-white px-6 py-2 hover:bg-green-600 transition-colors">
                         Create Job
                     </button>
+
+                    {error && (
+                        <p className="text-red-500 mb-4">
+                            {error}
+                        </p>
+                    )}
 
                 </form>
 

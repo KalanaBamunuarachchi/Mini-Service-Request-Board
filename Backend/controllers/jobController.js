@@ -2,7 +2,7 @@ import { JobRequest } from "../models/jobRequests.js";
 
 //regexr safe
 const regexSafe = (text) => {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return text.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 //create job

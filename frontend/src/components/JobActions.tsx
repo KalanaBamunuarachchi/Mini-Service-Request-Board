@@ -36,6 +36,14 @@ export default function JobStatus({
 
   const handleDeleteJob = async () => {
 
+    const confirmed = confirm(
+      "Are you sure you want to delete this job?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
 
       await deleteJob(jobId);
